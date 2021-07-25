@@ -1,48 +1,84 @@
-import { LoginInput, LoginOuput } from './dtos/login.dto';
-import { User } from './entities/user.entity';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import {LoginInput, LoginOutput} from './dtos/login.dto';
+import {User} from './entities/user.entity';
+import {Inject, Injectable} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Repository} from 'typeorm';
+import {CreateAccountInput, CreateAccountOutput} from "./dtos/createAccount.dto";
+import * as jwt from 'jsonwebtoken';
+import {JwtService} from "../jwt/jwt.service";
+
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private readonly user: Repository<User>,
-  ) {}
-
-  async login({ email, password }: LoginInput): Promise<LoginOuput> {
-    try {
-      const user = await this.user.findOne({ email });
-      if (user) {
-        return {
-          ok: false,
-          error: '이미 존재하는 이메일입니다',
-        };
-      }
-
-      const passwordCorrect = await user.checkPassword(password);
-
-      if (!passwordCorrect) {
-        return {
-          ok: false,
-          error: '비밀번호가 틀렸습니다.',
-        };
-      }
-
-      return {
-        ok: true,
-        token: 'hello IM TOKEN',
-      };
-    } catch {
-      return {
-        ok: false,
-        error: 'error',
-      };
+    constructor(
+        @InjectRepository(User)
+        private readonly user: Repository<User>,
+        private readonly jwtService: JwtService
+    ) {
     }
-  }
 
-  async getUser(): Promise<User[]> {
-    return await this.user.find();
-  }
+    async createAccount(createAccountInput: CreateAccountInput): Promise<CreateAccountOutput> {
+        try {
+            const {email} = createAccountInput;
+
+            const user = await this.user.findOne({email});
+
+            if (user) {
+                return {
+                    ok: false,
+                    error: "이미 해당 이메일의 아이디가 존재합니다."
+                }
+            }
+
+            await this.user.save(await this.user.create(createAccountInput));
+
+            return {
+                ok: true,
+            }
+
+        } catch {
+            return {
+                ok: false,
+                error: "새로고침후 다시 시도해주세요."
+            }
+        }
+    }
+
+
+    async login({email, password}: LoginInput): Promise<LoginOutput> {
+        try {
+            const user = await this.user.findOne({email});
+            if (!user) {
+                return {
+                    ok: false,
+                    error: '이메일과 비밀번호를 다시 한번 확인해주세요',
+                };
+            }
+
+            const passwordCorrect = await user.checkPassword(password);
+
+            if (!passwordCorrect) {
+                return {
+                    ok: false,
+                    error: '이메일과 비밀번호를 다시 한번 확인해주세요',
+                };
+            }
+
+            const token = this.jwtService.sign(user.id);
+
+            return {
+                ok: true,
+                token,
+            };
+        } catch {
+            return {
+                ok: false,
+                error: 'error',
+            };
+        }
+    }
+
+    async getUser(): Promise<User[]> {
+        return await this.user.find();
+    }
 }
