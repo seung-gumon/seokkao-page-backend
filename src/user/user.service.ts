@@ -1,10 +1,9 @@
 import {LoginInput, LoginOutput} from './dtos/login.dto';
 import {User} from './entities/user.entity';
-import {Inject, Injectable} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {CreateAccountInput, CreateAccountOutput} from "./dtos/createAccount.dto";
-import * as jwt from 'jsonwebtoken';
 import {JwtService} from "../jwt/jwt.service";
 
 
