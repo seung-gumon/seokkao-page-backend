@@ -1,7 +1,7 @@
 import {LoginOutput, LoginInput} from './dtos/login.dto';
 import {User} from './entities/user.entity';
 import {UserService} from './user.service';
-import {Args, Mutation, Query, Resolver} from '@nestjs/graphql';
+import {Args, Context, Mutation, Query, Resolver} from '@nestjs/graphql';
 import {CreateAccountInput, CreateAccountOutput} from "./dtos/createAccount.dto";
 
 @Resolver()
@@ -23,8 +23,11 @@ export class UserResolver {
     }
 
 
-    @Query(() => [User])
-    async findUser(): Promise<User[]> {
-        return await this.userService.getUser();
+    @Query(() => User)
+    me(@Context() context) {
+        console.log(context.user , "Context")
     }
+
+
+
 }

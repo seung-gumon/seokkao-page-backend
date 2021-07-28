@@ -7,6 +7,7 @@ import {CreateAccountInput, CreateAccountOutput} from "./dtos/createAccount.dto"
 import {JwtService} from "../jwt/jwt.service";
 
 
+
 @Injectable()
 export class UserService {
     constructor(
@@ -77,7 +78,12 @@ export class UserService {
         }
     }
 
-    async getUser(): Promise<User[]> {
-        return await this.user.find();
+
+    async findByHeaderUserId(id : number) : Promise<User> {
+        return this.user.findOne({id});
     }
+
+
+
+
 }
