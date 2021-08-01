@@ -11,17 +11,16 @@ import {
     Column,
     Entity,
     PrimaryGeneratedColumn,
-    Unique,
 } from 'typeorm';
-import {IsEmail, IsPhoneNumber, Length} from 'class-validator';
+import {IsEmail, IsPhoneNumber} from 'class-validator';
 import {CoreEntity} from 'src/common/entities/core.entity';
 import * as bcrypt from 'bcrypt';
 import {InternalServerError} from 'http-errors';
 
-enum UserRole {
-    User,
-    Novelist,
-    Cartoonist,
+export enum UserRole {
+    User = "User",
+    Novelist = "Novelist",
+    Cartoonist = "Cartoonist",
 }
 
 registerEnumType(UserRole, {name: 'UserRole'});

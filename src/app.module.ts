@@ -4,10 +4,10 @@ import {UserModule} from './user/user.module';
 import {GraphQLModule} from '@nestjs/graphql';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {ConfigModule} from '@nestjs/config';
-import {CommonModule} from './common/common.module';
 import {JwtModule} from './jwt/jwt.module';
 import {JwtMiddleware} from "./jwt/jwt.middleware";
-import { AuthModule } from './auth/auth.module';
+import {AuthModule} from "./auth/auth.module";
+
 
 
 @Module({
@@ -33,11 +33,10 @@ import { AuthModule } from './auth/auth.module';
             entities: [User],
         }),
         UserModule,
-        CommonModule,
+        AuthModule,
         JwtModule.forRoot({
             privateKey: process.env.SECRET_KEY
         }),
-        AuthModule,
     ],
     providers: [],
 })
