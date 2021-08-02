@@ -7,7 +7,8 @@ import {ConfigModule} from '@nestjs/config';
 import {JwtModule} from './jwt/jwt.module';
 import {JwtMiddleware} from "./jwt/jwt.middleware";
 import {AuthModule} from "./auth/auth.module";
-
+import {CategoryModule} from './category/category.module';
+import {Category} from "./category/entities/category.entity";
 
 
 @Module({
@@ -19,7 +20,7 @@ import {AuthModule} from "./auth/auth.module";
         }),
         GraphQLModule.forRoot({
             autoSchemaFile: true,
-            context : ({req}) => ({user : req['user']})
+            context: ({req}) => ({user: req['user']})
         }),
         TypeOrmModule.forRoot({
             type: 'postgres',
@@ -30,13 +31,14 @@ import {AuthModule} from "./auth/auth.module";
             database: 'seokkao-page',
             synchronize: true,
             logging: false,
-            entities: [User],
+            entities: [User, Category],
         }),
         UserModule,
         AuthModule,
         JwtModule.forRoot({
             privateKey: process.env.SECRET_KEY
         }),
+        CategoryModule,
     ],
     providers: [],
 })
