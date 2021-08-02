@@ -1,4 +1,4 @@
-import {Field, InputType, Int, ObjectType, registerEnumType} from "@nestjs/graphql";
+import {Field, InputType, ObjectType, registerEnumType} from "@nestjs/graphql";
 import {Column, Entity, OneToMany} from "typeorm";
 import {CoreEntity} from "../../common/entities/core.entity";
 

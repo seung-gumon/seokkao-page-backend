@@ -9,6 +9,7 @@ import {JwtMiddleware} from "./jwt/jwt.middleware";
 import {AuthModule} from "./auth/auth.module";
 import {CategoryModule} from './category/category.module';
 import {Category} from "./category/entities/category.entity";
+import { SeriesModule } from './series/series.module';
 
 
 @Module({
@@ -39,6 +40,7 @@ import {Category} from "./category/entities/category.entity";
             privateKey: process.env.SECRET_KEY
         }),
         CategoryModule,
+        SeriesModule,
     ],
     providers: [],
 })
