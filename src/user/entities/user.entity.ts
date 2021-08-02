@@ -55,6 +55,12 @@ export class User extends CoreEntity {
     @Column()
     phoneNumber: string;
 
+
+    @Field(() => Int)
+    @Column()
+    coin: number;
+
+
     @BeforeInsert()
     @BeforeUpdate()
     async hashPassword(): Promise<void> {
