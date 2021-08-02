@@ -1,6 +1,7 @@
 import {Field, InputType, ObjectType, registerEnumType} from "@nestjs/graphql";
-import {Column, Entity, OneToMany} from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany} from "typeorm";
 import {CoreEntity} from "../../common/entities/core.entity";
+import {Series} from "../../series/entities/series.entity";
 
 
 export enum MainCategoryRole {
@@ -26,6 +27,7 @@ export class Category extends CoreEntity {
     categoryName : string
 
 
-
-
+    @Field(() => Series)
+    @ManyToOne(() => Series)
+    series: Series
 }

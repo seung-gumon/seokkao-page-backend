@@ -10,6 +10,8 @@ import {AuthModule} from "./auth/auth.module";
 import {CategoryModule} from './category/category.module';
 import {Category} from "./category/entities/category.entity";
 import { SeriesModule } from './series/series.module';
+import {Series} from "./series/entities/series.entity";
+import {Part} from "./series/entities/part.entity";
 
 
 @Module({
@@ -32,7 +34,7 @@ import { SeriesModule } from './series/series.module';
             database: 'seokkao-page',
             synchronize: true,
             logging: false,
-            entities: [User, Category],
+            entities: [User, Category , Series , Part],
         }),
         UserModule,
         AuthModule,
