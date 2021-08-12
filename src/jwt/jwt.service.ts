@@ -12,7 +12,9 @@ export class JwtService {
     }
 
     sign(userId: number): string {
-        return jwt.sign({id: userId}, this.configOptions.privateKey);
+        return jwt.sign({id: userId}, this.configOptions.privateKey , {
+            expiresIn : "1d"
+        });
     }
 
     verify(token : string) {
