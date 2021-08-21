@@ -12,7 +12,7 @@ export enum MainCategoryRole {
 registerEnumType(MainCategoryRole, {name: 'MainCategoryRole'})
 
 @ObjectType()
-@InputType({isAbstract: true})
+@InputType("CategoryInput" , {isAbstract: true})
 @Entity('category')
 export class Category extends CoreEntity {
 

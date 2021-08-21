@@ -4,10 +4,9 @@ import {CoreEntity} from "../../common/entities/core.entity";
 import {Category} from "../../category/entities/category.entity";
 import {User} from "../../user/entities/user.entity";
 
-
+@InputType("SeriesInput",  {isAbstract: true})
 @ObjectType()
-@InputType({isAbstract: true})
-@Entity('series')
+@Entity('Series')
 export class Series extends CoreEntity {
 
 
