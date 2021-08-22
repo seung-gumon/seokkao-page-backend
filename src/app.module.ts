@@ -12,6 +12,7 @@ import {Category} from "./category/entities/category.entity";
 import { SeriesModule } from './series/series.module';
 import {Series} from "./series/entities/series.entity";
 import {Part} from "./series/entities/part.entity";
+import {UploadsModule} from "./uploads/uploads.module";
 
 
 @Module({
@@ -47,6 +48,7 @@ import {Part} from "./series/entities/part.entity";
         }),
         CategoryModule,
         SeriesModule,
+        UploadsModule
     ],
     providers: [],
 })
