@@ -11,8 +11,8 @@ export enum MainCategoryRole {
 
 registerEnumType(MainCategoryRole, {name: 'MainCategoryRole'})
 
-@ObjectType()
 @InputType("CategoryInput" , {isAbstract: true})
+@ObjectType()
 @Entity('category')
 export class Category extends CoreEntity {
 
@@ -27,7 +27,4 @@ export class Category extends CoreEntity {
     categoryName : string
 
 
-    @Field(() => Series)
-    @ManyToOne(() => Series)
-    series: Series
 }

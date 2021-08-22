@@ -3,7 +3,8 @@ import {Series} from "../entities/series.entity";
 
 
 @InputType()
-export class CreateSeriesInput extends PickType(Series , ['thumbnail','name','serialization','like','view']) {
+export class CreateSeriesInput extends OmitType(Series,["category",'writer']){
+
     @Field(() => Int)
-    writer : number
+    category : number
 }
