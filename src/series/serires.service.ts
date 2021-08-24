@@ -6,6 +6,7 @@ import {CreateSeriesInput} from "./dtos/create-series.dto";
 import {CoreOutput} from "../common/dtos/core.dto";
 import {User} from "../user/entities/user.entity";
 import {Category} from "../category/entities/category.entity";
+import * as moment from 'moment';
 
 
 @Injectable()
@@ -37,13 +38,18 @@ export class SeriresService {
 
     async getMainPage(): Promise<Series[]> {
         try {
-            const series = await this.series.find({
-                take: 10
-            });
+            const minusSevenDaysFromToday = moment().add(-7, 'days').format('YYYY-MM-DD');
+
+            const series = await this.series
+                .createQueryBuilder('series')
+                .andWhere(`series.createdAt >= :minusSevenDaysFromToday`, {minusSevenDaysFromToday})
+                .take(10)
+                .getMany();
+
 
             return series;
-        } catch {
-
+        } catch(e){
+            console.log(e)
         }
     }
 

@@ -18,6 +18,10 @@ export class Series extends CoreEntity {
     @Column()
     name: string
 
+    @Field(() => String)
+    @Column()
+    description: string
+
 
     @Field(() => String, {
         description: "언제 연재하는지"
@@ -27,11 +31,11 @@ export class Series extends CoreEntity {
 
 
     @Field(() => Int)
-    @Column()
+    @Column({default : 0})
     like: number
 
     @Field(() => Int)
-    @Column()
+    @Column({default : 0})
     view: number
 
 

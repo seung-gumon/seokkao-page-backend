@@ -17,7 +17,7 @@ export class SeriesResolver {
 
     @Mutation(() => CoreOutput)
     @Roles(['Novelist','Cartoonist','User'])
-    async CreateSeries(
+    async createSeries(
         @AuthUser() user : User,
         @Args('input') CreateSeriesInput : CreateSeriesInput
     ) : Promise<CoreOutput> {
@@ -26,7 +26,7 @@ export class SeriesResolver {
 
 
     @Query(() => [Series])
-    async MainBanner(): Promise<Series[]> {
+    async mainBanner(): Promise<Series[]> {
         return await this.seriesService.getMainPage();
     }
 
