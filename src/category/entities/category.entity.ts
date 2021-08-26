@@ -27,4 +27,9 @@ export class Category extends CoreEntity {
     categoryName : string
 
 
+    // @Field(() => [Series])
+    // @ManyToOne(() => Series , {onDelete :"CASCADE"})
+    // series : Series[]
+
+
 }

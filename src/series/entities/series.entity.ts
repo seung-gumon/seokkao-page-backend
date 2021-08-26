@@ -45,7 +45,7 @@ export class Series extends CoreEntity {
 
 
     @Field(() => Category)
-    @OneToOne(type => Category)
+    @ManyToOne(() => Category)
     category: Category
 
 

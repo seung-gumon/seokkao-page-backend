@@ -1,11 +1,11 @@
 import {Injectable} from "@nestjs/common";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Series} from "./entities/series.entity";
-import {Repository} from "typeorm";
+import {Raw, Repository} from "typeorm";
 import {CreateSeriesInput} from "./dtos/create-series.dto";
 import {CoreOutput} from "../common/dtos/core.dto";
 import {User} from "../user/entities/user.entity";
-import {Category} from "../category/entities/category.entity";
+import {Category, MainCategoryRole} from "../category/entities/category.entity";
 import * as moment from 'moment';
 
 
@@ -46,10 +46,29 @@ export class SeriresService {
                 .take(10)
                 .getMany();
 
-
             return series;
         } catch(e){
             console.log(e)
+        }
+    }
+
+
+    async getSerializationToday(today: string, mainCategory: MainCategoryRole): Promise<Series[]> {
+        try {
+            const replaceDay = today.replace("요일", "");
+
+
+            const series = await this.series
+                .createQueryBuilder('series')
+                .leftJoinAndSelect('series.category','category')
+                .where('series.serialization ILIKE :today', {today: `%${replaceDay}%`})
+                .andWhere(`category.mainCategory =:mainCategory `, {mainCategory})
+                .getMany()
+
+
+            return series;
+        } catch (e) {
+            console.log(e);
         }
     }
 

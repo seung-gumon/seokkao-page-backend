@@ -6,6 +6,7 @@ import {CreateSeriesInput} from "./dtos/create-series.dto";
 import {Roles} from "../auth/role.decorator";
 import {AuthUser} from "../auth/auth-user.decorator";
 import {User} from "../user/entities/user.entity";
+import {MainCategoryRole} from "../category/entities/category.entity";
 
 
 @Resolver()
@@ -28,6 +29,14 @@ export class SeriesResolver {
     @Query(() => [Series])
     async mainBanner(): Promise<Series[]> {
         return await this.seriesService.getMainPage();
+    }
+
+    @Query(() => [Series])
+    async getSerializationTodayFromMain(
+        @Args('today') today: string,
+        @Args('mainCategory') mainCategory: MainCategoryRole,
+    ): Promise<Series[]> {
+        return await this.seriesService.getSerializationToday(today, mainCategory)
     }
 
 }
