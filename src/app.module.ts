@@ -25,7 +25,7 @@ import {UploadsModule} from "./uploads/uploads.module";
         GraphQLModule.forRoot({
             autoSchemaFile: true,
             cors: {
-                origin: 'http://localhost:3000',
+                origin: ['http://localhost:3000'],
                 credentials: true,
             },
             context: ({req}) => ({user: req['user']})

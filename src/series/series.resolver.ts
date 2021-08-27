@@ -6,7 +6,7 @@ import {CreateSeriesInput} from "./dtos/create-series.dto";
 import {Roles} from "../auth/role.decorator";
 import {AuthUser} from "../auth/auth-user.decorator";
 import {User} from "../user/entities/user.entity";
-import {MainCategoryRole} from "../category/entities/category.entity";
+import {OrderByPopularOutput} from "./dtos/order-by-popular.dto";
 
 
 @Resolver()
@@ -17,12 +17,12 @@ export class SeriesResolver {
     }
 
     @Mutation(() => CoreOutput)
-    @Roles(['Novelist','Cartoonist','User'])
+    @Roles(['Novelist', 'Cartoonist', 'User'])
     async createSeries(
-        @AuthUser() user : User,
-        @Args('input') CreateSeriesInput : CreateSeriesInput
-    ) : Promise<CoreOutput> {
-        return await this.seriesService.createSeries(CreateSeriesInput,user);
+        @AuthUser() user: User,
+        @Args('input') CreateSeriesInput: CreateSeriesInput
+    ): Promise<CoreOutput> {
+        return await this.seriesService.createSeries(CreateSeriesInput, user);
     }
 
 
@@ -34,9 +34,16 @@ export class SeriesResolver {
     @Query(() => [Series])
     async getSerializationTodayFromMain(
         @Args('today') today: string,
-        @Args('mainCategory') mainCategory: MainCategoryRole,
+        @Args('mainCategory') mainCategory: "Cartoon" | "Novel",
     ): Promise<Series[]> {
         return await this.seriesService.getSerializationToday(today, mainCategory)
+    }
+
+    @Query(() => OrderByPopularOutput)
+    async orderByPopular(
+        @Args('today') today : string
+    ) : Promise<OrderByPopularOutput> {
+        return await this.seriesService.orderByPopular(today)
     }
 
 }

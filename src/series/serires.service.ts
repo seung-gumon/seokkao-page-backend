@@ -5,8 +5,9 @@ import {Raw, Repository} from "typeorm";
 import {CreateSeriesInput} from "./dtos/create-series.dto";
 import {CoreOutput} from "../common/dtos/core.dto";
 import {User} from "../user/entities/user.entity";
-import {Category, MainCategoryRole} from "../category/entities/category.entity";
+import {Category} from "../category/entities/category.entity";
 import * as moment from 'moment';
+import {OrderByPopularOutput} from "./dtos/order-by-popular.dto";
 
 
 @Injectable()
@@ -47,28 +48,63 @@ export class SeriresService {
                 .getMany();
 
             return series;
-        } catch(e){
+        } catch (e) {
             console.log(e)
         }
     }
 
 
-    async getSerializationToday(today: string, mainCategory: MainCategoryRole): Promise<Series[]> {
+    async getSerializationToday(today: string, mainCategory: "Cartoon" | "Novel"): Promise<Series[]> {
         try {
             const replaceDay = today.replace("요일", "");
 
-
             const series = await this.series
                 .createQueryBuilder('series')
-                .leftJoinAndSelect('series.category','category')
+                .leftJoinAndSelect('series.category', 'category')
                 .where('series.serialization ILIKE :today', {today: `%${replaceDay}%`})
                 .andWhere(`category.mainCategory =:mainCategory `, {mainCategory})
-                .getMany()
-
+                .getMany();
 
             return series;
         } catch (e) {
             console.log(e);
+        }
+    }
+
+
+    async orderByPopular(today : string) : Promise<OrderByPopularOutput> {
+        try{
+
+            const replaceDay = today.replace("요일", "");
+
+            const cartoons = await this.series
+                .createQueryBuilder('series')
+                .leftJoinAndSelect('series.category', 'category')
+                .leftJoinAndSelect('series.writer','writer')
+                .where('series.serialization ILIKE :today', {today: `%${replaceDay}%`})
+                .andWhere(`category.mainCategory =:mainCategory `, {mainCategory : "Cartoon"})
+                .take(4)
+                .orderBy('series.like' , "DESC")
+                .getMany();
+
+
+            const novels = await this.series
+                .createQueryBuilder('series')
+                .leftJoinAndSelect('series.category', 'category')
+                .leftJoinAndSelect('series.writer','writer')
+                .where('series.serialization ILIKE :today', {today: `%${replaceDay}%`})
+                .andWhere(`category.mainCategory =:mainCategory `, {mainCategory : "Novel"})
+                .take(4)
+                .orderBy('series.like' , "DESC")
+                .getMany();
+
+            return {
+                cartoon : cartoons,
+                novel : novels
+            }
+
+        }catch (e) {
+            console.log(e)
         }
     }
 
