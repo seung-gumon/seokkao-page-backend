@@ -46,4 +46,13 @@ export class SeriesResolver {
         return await this.seriesService.orderByPopular(today)
     }
 
+
+    @Query(() => [Series])
+    @Roles(['Novelist', 'Cartoonist'])
+    async mySeries(
+        @AuthUser() authUser: User
+    ) : Promise<Series[]> {
+        return await this.seriesService.mySeries(authUser)
+    }
+
 }

@@ -72,40 +72,57 @@ export class SeriresService {
     }
 
 
-    async orderByPopular(today : string) : Promise<OrderByPopularOutput> {
-        try{
+    async orderByPopular(today: string): Promise<OrderByPopularOutput> {
+        try {
 
             const replaceDay = today.replace("요일", "");
 
             const cartoons = await this.series
                 .createQueryBuilder('series')
                 .leftJoinAndSelect('series.category', 'category')
-                .leftJoinAndSelect('series.writer','writer')
+                .leftJoinAndSelect('series.writer', 'writer')
                 .where('series.serialization ILIKE :today', {today: `%${replaceDay}%`})
-                .andWhere(`category.mainCategory =:mainCategory `, {mainCategory : "Cartoon"})
+                .andWhere(`category.mainCategory =:mainCategory `, {mainCategory: "Cartoon"})
                 .take(4)
-                .orderBy('series.like' , "DESC")
+                .orderBy('series.like', "DESC")
                 .getMany();
 
 
             const novels = await this.series
                 .createQueryBuilder('series')
                 .leftJoinAndSelect('series.category', 'category')
-                .leftJoinAndSelect('series.writer','writer')
+                .leftJoinAndSelect('series.writer', 'writer')
                 .where('series.serialization ILIKE :today', {today: `%${replaceDay}%`})
-                .andWhere(`category.mainCategory =:mainCategory `, {mainCategory : "Novel"})
+                .andWhere(`category.mainCategory =:mainCategory `, {mainCategory: "Novel"})
                 .take(4)
-                .orderBy('series.like' , "DESC")
+                .orderBy('series.like', "DESC")
                 .getMany();
 
             return {
-                cartoon : cartoons,
-                novel : novels
+                cartoon: cartoons,
+                novel: novels
             }
 
-        }catch (e) {
+        } catch (e) {
             console.log(e)
         }
+    }
+
+
+    async mySeries(writer: User): Promise<Series[]> {
+        try {
+            const series = await this.series.find({
+                where: {
+                    writer
+                },
+                relations: ['writer', 'category']
+            });
+
+            return series
+        } catch (e) {
+            console.log(e, "error")
+        }
+
     }
 
 
