@@ -9,13 +9,14 @@ import {
     BeforeInsert,
     BeforeUpdate,
     Column,
-    Entity,
+    Entity, OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import {IsEmail, IsPhoneNumber} from 'class-validator';
 import {CoreEntity} from 'src/common/entities/core.entity';
 import * as bcrypt from 'bcrypt';
 import {InternalServerError} from 'http-errors';
+import {Series} from "../../series/entities/series.entity";
 
 export enum UserRole {
     User = "User",
@@ -59,6 +60,10 @@ export class User extends CoreEntity {
     @Field(() => Int)
     @Column()
     coin: number;
+
+    @Field(() => [Series])
+    @OneToMany(() => Series, series => series.writer)
+    series: Series[]
 
 
     @BeforeInsert()

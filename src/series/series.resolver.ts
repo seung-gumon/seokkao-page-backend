@@ -7,6 +7,7 @@ import {Roles} from "../auth/role.decorator";
 import {AuthUser} from "../auth/auth-user.decorator";
 import {User} from "../user/entities/user.entity";
 import {OrderByPopularOutput} from "./dtos/order-by-popular.dto";
+import {MySeriesOutputDto} from "./dtos/my-series-output.dto";
 
 
 @Resolver()
@@ -47,12 +48,19 @@ export class SeriesResolver {
     }
 
 
-    @Query(() => [Series])
+    @Query(() => MySeriesOutputDto)
     @Roles(['Novelist', 'Cartoonist'])
     async mySeries(
         @AuthUser() authUser: User
-    ) : Promise<Series[]> {
+    ) : Promise<MySeriesOutputDto> {
         return await this.seriesService.mySeries(authUser)
+    }
+
+    @Query(() => Series)
+    async findByIdSeries(
+        @Args('seriesId') seriesId: number
+    ): Promise<Series> {
+        return await this.seriesService.findByIdSeries(seriesId);
     }
 
 }

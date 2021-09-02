@@ -8,6 +8,7 @@ import {User} from "../user/entities/user.entity";
 import {Category} from "../category/entities/category.entity";
 import * as moment from 'moment';
 import {OrderByPopularOutput} from "./dtos/order-by-popular.dto";
+import {MySeriesOutputDto} from "./dtos/my-series-output.dto";
 
 
 @Injectable()
@@ -16,7 +17,9 @@ export class SeriresService {
         @InjectRepository(Series)
         private readonly series: Repository<Series>,
         @InjectRepository(Category)
-        private readonly category: Repository<Category>
+        private readonly category: Repository<Category>,
+        @InjectRepository(User)
+        private readonly user: Repository<User>
     ) {
     }
 
@@ -109,20 +112,31 @@ export class SeriresService {
     }
 
 
-    async mySeries(writer: User): Promise<Series[]> {
+    async mySeries(writer: User): Promise<MySeriesOutputDto> {
         try {
-            const series = await this.series.find({
+            const writerUser = await this.user.findOne({
                 where: {
-                    writer
+                    id : writer.id
                 },
-                relations: ['writer', 'category']
+                relations : ['series','series.category']
             });
 
-            return series
+            return writerUser
         } catch (e) {
             console.log(e, "error")
         }
+    }
 
+    async findByIdSeries(seriesId : number) : Promise<Series> {
+        try{
+            return await this.series.findOne({
+                where :{
+                    id : seriesId
+                }
+            })
+        }catch (e) {
+            return null
+        }
     }
 
 
