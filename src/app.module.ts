@@ -13,6 +13,7 @@ import { SeriesModule } from './series/series.module';
 import {Series} from "./series/entities/series.entity";
 import {Part} from "./series/entities/part.entity";
 import {UploadsModule} from "./uploads/uploads.module";
+import {Episode} from "./series/entities/episode.entity";
 
 
 @Module({
@@ -39,7 +40,7 @@ import {UploadsModule} from "./uploads/uploads.module";
             database: 'seokkao-page',
             synchronize: true,
             logging: false,
-            entities: [User, Category , Series , Part],
+            entities: [User, Category , Series , Part , Episode],
         }),
         UserModule,
         AuthModule,

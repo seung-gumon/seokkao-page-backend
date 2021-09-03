@@ -3,6 +3,7 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne} from "typeor
 import {CoreEntity} from "../../common/entities/core.entity";
 import {Category} from "../../category/entities/category.entity";
 import {User} from "../../user/entities/user.entity";
+import {Episode} from "./episode.entity";
 
 @InputType("SeriesInput",  {isAbstract: true})
 @ObjectType()
@@ -47,6 +48,11 @@ export class Series extends CoreEntity {
     @Field(() => Category)
     @ManyToOne(() => Category)
     category: Category
+
+
+    @Field(() => [Episode])
+    @OneToMany(() => Episode , Episode => Episode.Series)
+    episode : Episode[]
 
 
 }

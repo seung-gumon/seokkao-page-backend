@@ -9,6 +9,7 @@ import {Category} from "../category/entities/category.entity";
 import * as moment from 'moment';
 import {OrderByPopularOutput} from "./dtos/order-by-popular.dto";
 import {MySeriesOutputDto} from "./dtos/my-series-output.dto";
+import {Episode} from "./entities/episode.entity";
 
 
 @Injectable()
@@ -19,7 +20,9 @@ export class SeriresService {
         @InjectRepository(Category)
         private readonly category: Repository<Category>,
         @InjectRepository(User)
-        private readonly user: Repository<User>
+        private readonly user: Repository<User>,
+        @InjectRepository(Episode)
+        private readonly episode : Repository<Episode>
     ) {
     }
 
@@ -127,14 +130,17 @@ export class SeriresService {
         }
     }
 
+
     async findByIdSeries(seriesId : number) : Promise<Series> {
         try{
             return await this.series.findOne({
                 where :{
                     id : seriesId
-                }
+                },
+                relations : ['episode','writer'],
             })
         }catch (e) {
+            console.log(e);
             return null
         }
     }

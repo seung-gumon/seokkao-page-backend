@@ -6,10 +6,11 @@ import {Category} from "../category/entities/category.entity";
 import {SeriresService} from "./serires.service";
 import {SeriesResolver} from "./series.resolver";
 import {User} from "../user/entities/user.entity";
+import {Episode} from "./entities/episode.entity";
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Series , Part , Category , User])],
+    imports: [TypeOrmModule.forFeature([Series , Part , Category , User , Episode])],
     exports: [],
     providers: [SeriresService,SeriesResolver]
 })
