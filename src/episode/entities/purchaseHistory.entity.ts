@@ -1,9 +1,10 @@
 import {Field, InputType, Int, ObjectType} from "@nestjs/graphql";
-import {Column, Entity, ManyToOne, OneToMany} from "typeorm";
+import {Column, Entity, ManyToOne} from "typeorm";
 import {CoreEntity} from "../../common/entities/core.entity";
-import {Series} from "./series.entity";
+import {Series} from "../../series/entities/series.entity";
 import {Episode} from "./episode.entity";
 import {User} from "../../user/entities/user.entity";
+import * as moment from 'moment';
 
 
 @InputType('PurchaseHistoryInput', {isAbstract: true})
@@ -23,5 +24,8 @@ export class PurChaseHistory extends CoreEntity {
     @Field(() => User)
     @ManyToOne(() => User, {onDelete: "CASCADE"})
     writer: User
+
+    @Column({default : moment(new Date()).format('YYYY-MM-DD')})
+    createDate : string
 
 }

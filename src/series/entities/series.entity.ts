@@ -3,7 +3,7 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne} from "typeor
 import {CoreEntity} from "../../common/entities/core.entity";
 import {Category} from "../../category/entities/category.entity";
 import {User} from "../../user/entities/user.entity";
-import {Episode} from "./episode.entity";
+import {Episode} from "../../episode/entities/episode.entity";
 
 @InputType("SeriesInput",  {isAbstract: true})
 @ObjectType()

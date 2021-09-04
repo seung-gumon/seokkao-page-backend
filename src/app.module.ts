@@ -11,10 +11,10 @@ import {CategoryModule} from './category/category.module';
 import {Category} from "./category/entities/category.entity";
 import { SeriesModule } from './series/series.module';
 import {Series} from "./series/entities/series.entity";
-import {Part} from "./series/entities/part.entity";
+import {Part} from "./episode/entities/part.entity";
 import {UploadsModule} from "./uploads/uploads.module";
-import {Episode} from "./series/entities/episode.entity";
-import {PurChaseHistory} from "./series/entities/purchaseHistory.entity";
+import {Episode} from "./episode/entities/episode.entity";
+import {PurChaseHistory} from "./episode/entities/purchaseHistory.entity";
 import { EpisodeModule } from './episode/episode.module';
 
 

@@ -9,8 +9,8 @@ import {Category} from "../category/entities/category.entity";
 import * as moment from 'moment';
 import {OrderByPopularOutput} from "./dtos/order-by-popular.dto";
 import {MySeriesOutputDto} from "./dtos/my-series-output.dto";
-import {Episode} from "./entities/episode.entity";
-import {PurChaseHistory} from "./entities/purchaseHistory.entity";
+import {Episode} from "../episode/entities/episode.entity";
+import {PurChaseHistory} from "../episode/entities/purchaseHistory.entity";
 
 
 @Injectable()

@@ -1,7 +1,7 @@
 import {Field, InputType, Int, ObjectType} from "@nestjs/graphql";
 import {Column, Entity, ManyToOne,} from "typeorm";
 import {CoreEntity} from "../../common/entities/core.entity";
-import {Series} from "./series.entity";
+import {Series} from "../../series/entities/series.entity";
 
 @InputType("EpisodeInput", {isAbstract: true})
 @ObjectType()
