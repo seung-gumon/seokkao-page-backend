@@ -137,7 +137,7 @@ export class SeriresService {
                 where :{
                     id : seriesId
                 },
-                relations : ['episode','writer'],
+                relations : ['episode','writer','category'],
             })
         }catch (e) {
             console.log(e);
