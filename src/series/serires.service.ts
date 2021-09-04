@@ -10,6 +10,7 @@ import * as moment from 'moment';
 import {OrderByPopularOutput} from "./dtos/order-by-popular.dto";
 import {MySeriesOutputDto} from "./dtos/my-series-output.dto";
 import {Episode} from "./entities/episode.entity";
+import {PurChaseHistory} from "./entities/purchaseHistory.entity";
 
 
 @Injectable()
@@ -22,7 +23,9 @@ export class SeriresService {
         @InjectRepository(User)
         private readonly user: Repository<User>,
         @InjectRepository(Episode)
-        private readonly episode : Repository<Episode>
+        private readonly episode : Repository<Episode>,
+        @InjectRepository(PurChaseHistory)
+        private readonly purChaseHistory : Repository<PurChaseHistory>
     ) {
     }
 

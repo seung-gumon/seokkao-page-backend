@@ -14,6 +14,8 @@ import {Series} from "./series/entities/series.entity";
 import {Part} from "./series/entities/part.entity";
 import {UploadsModule} from "./uploads/uploads.module";
 import {Episode} from "./series/entities/episode.entity";
+import {PurChaseHistory} from "./series/entities/purchaseHistory.entity";
+import { EpisodeModule } from './episode/episode.module';
 
 
 @Module({
@@ -40,7 +42,7 @@ import {Episode} from "./series/entities/episode.entity";
             database: 'seokkao-page',
             synchronize: true,
             logging: false,
-            entities: [User, Category , Series , Part , Episode],
+            entities: [User, Category , Series , Part , Episode , PurChaseHistory],
         }),
         UserModule,
         AuthModule,
@@ -49,7 +51,8 @@ import {Episode} from "./series/entities/episode.entity";
         }),
         CategoryModule,
         SeriesModule,
-        UploadsModule
+        UploadsModule,
+        EpisodeModule
     ],
     providers: [],
 })
