@@ -15,12 +15,14 @@ export class EpisodeResolver {
     ) {
     }
 
-
-    @Query(() => Episode)
-    async findByIdEpisode(
-        @Args('id') id : number
-    ) : Promise<Episode> {
-        return await this.episodeService.findByIdEpisode(id)
+    @Roles(['Novelist', 'Cartoonist'])
+    @Query(() => Episode , {nullable : true})
+    async adminFindByIdEpisode(
+        @Args('seriesId') seriesId : number,
+        @Args('episodeId') episodeId : number,
+        @AuthUser() authUser: User,
+    ) : Promise<Episode | null> {
+        return await this.episodeService.adminFindByIdEpisode(seriesId, episodeId, authUser);
     }
 
     @Roles(['Novelist', 'Cartoonist'])

@@ -8,8 +8,8 @@ import {Series} from "../../series/entities/series.entity";
 @Entity('Episode')
 export class Episode extends CoreEntity {
     @ManyToOne(() => Series, Series => Series.id)
-    @Field(() => Int)
-    Series: number;
+    @Field(() => Series)
+    series: Series;
 
     @Column()
     @Field(() => Int)

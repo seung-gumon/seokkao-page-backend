@@ -21,8 +21,23 @@ export class EpisodeService {
     }
 
 
-    async findByIdEpisode(id: number): Promise<Episode> {
-        return await this.episode.findOne({id})
+    async adminFindByIdEpisode(seriesId, episodeId, authUser): Promise<Episode | null> {
+        try {
+            const episode = await this.episode.findOne({
+                where: {
+                    series: seriesId,
+                    episode: episodeId,
+                },
+                relations: ['series']
+            });
+
+            if (!episode || episode.series.writerId !== authUser.id) {
+                return null
+            }
+            return episode
+        } catch {
+            return null
+        }
     }
 
 
@@ -33,10 +48,10 @@ export class EpisodeService {
                 where: {
                     id: purChaseHistoryInput.seriesId
                 },
-                relations: ['episode', 'writer', 'category'],
+                relations: ['episode', 'category'],
             })
 
-            if (series.writer.id !== authUser.id) {
+            if (series.writerId !== authUser.id) {
                 return null
             }
 
@@ -72,22 +87,5 @@ export class EpisodeService {
         }
     }
 
-
-    // async totalPurchase(seriesId : number) : Promise<number> {
-    //     try{
-    //         const seriesTotalPurchase = await this.purchaseHistory
-    //             .createQueryBuilder('purchaseHistory')
-    //             .where(`purchaseHistory.seriesId = :seriesId`, {seriesId})
-    //             .select(`purchaseHistory.seriesId`)
-    //             .addSelect('COUNT(*) AS count')
-    //             .groupBy('purchaseHistory.seriesId')
-    //             .getRawOne();
-    //
-    //         return seriesTotalPurchase.count;
-    //     }catch (e) {
-    //         console.log(e);
-    //         return null
-    //     }
-    // }
 
 }

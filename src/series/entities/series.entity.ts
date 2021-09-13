@@ -1,5 +1,5 @@
 import {Field, InputType, Int, ObjectType, registerEnumType} from "@nestjs/graphql";
-import {Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, RelationId} from "typeorm";
 import {CoreEntity} from "../../common/entities/core.entity";
 import {Category} from "../../category/entities/category.entity";
 import {User} from "../../user/entities/user.entity";
@@ -45,13 +45,18 @@ export class Series extends CoreEntity {
     writer: User
 
 
+    @RelationId((series : Series) => series.writer)
+    @Field(() => Int)
+    writerId: number;
+
+
     @Field(() => Category)
     @ManyToOne(() => Category)
     category: Category
 
 
     @Field(() => [Episode])
-    @OneToMany(() => Episode , Episode => Episode.Series)
+    @OneToMany(() => Episode , Episode => Episode.series)
     episode : Episode[]
 
 
