@@ -56,10 +56,10 @@ export class SeriesResolver {
         return await this.seriesService.mySeries(authUser)
     }
 
-    @Query(() => Series)
+    @Query(() => Series, {nullable : true})
     async findByIdSeries(
         @Args('seriesId') seriesId: number
-    ): Promise<Series> {
+    ): Promise<Series | null> {
         return await this.seriesService.findByIdSeries(seriesId);
     }
 

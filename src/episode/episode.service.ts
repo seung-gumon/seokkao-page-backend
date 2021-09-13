@@ -5,10 +5,14 @@ import {Repository} from "typeorm";
 import {PurChaseHistory} from "./entities/purchaseHistory.entity";
 import {PurChaseHistoryInput, PurchaseHistoryOutput} from "./dtos/purchase-history.dto";
 import * as moment from 'moment';
+import {User} from "../user/entities/user.entity";
+import {Series} from "../series/entities/series.entity";
 
 @Injectable()
 export class EpisodeService {
     constructor(
+        @InjectRepository(Series)
+        private readonly series : Repository<Series>,
         @InjectRepository(Episode)
         private readonly episode : Repository<Episode>,
         @InjectRepository(PurChaseHistory)
@@ -22,9 +26,20 @@ export class EpisodeService {
     }
 
 
-
-    async seriesDashBoardData(purChaseHistoryInput : PurChaseHistoryInput) : Promise<PurchaseHistoryOutput> {
+    async seriesDashBoardData(purChaseHistoryInput: PurChaseHistoryInput, authUser: User): Promise<PurchaseHistoryOutput> {
         try {
+
+            const series = await this.series.findOne({
+                where: {
+                    id: purChaseHistoryInput.seriesId
+                },
+                relations: ['episode', 'writer', 'category'],
+            })
+
+            if (series.writer.id !== authUser.id) {
+                return null
+            }
+
             const purchaseHistory = await this.purchaseHistory
                 .createQueryBuilder('purchaseHistory')
                 .where(`purchaseHistory.seriesId = :seriesId`, {seriesId: purChaseHistoryInput.seriesId})
@@ -43,34 +58,36 @@ export class EpisodeService {
             purchaseHistory.forEach((item) => {
                 date.push(item.purchaseHistory_createDate);
                 count.push(+item.count)
-            })
+            });
+
 
             return {
                 date,
-                count
+                count,
+                series,
             }
-        }catch (e) {
+        } catch (e) {
             console.log(e);
             return null
         }
     }
 
 
-    async totalPurchase(seriesId : number) : Promise<number> {
-        try{
-            const seriesTotalPurchase = await this.purchaseHistory
-                .createQueryBuilder('purchaseHistory')
-                .where(`purchaseHistory.seriesId = :seriesId`, {seriesId})
-                .select(`purchaseHistory.seriesId`)
-                .addSelect('COUNT(*) AS count')
-                .groupBy('purchaseHistory.seriesId')
-                .getRawOne();
-
-            return seriesTotalPurchase.count;
-        }catch (e) {
-            console.log(e);
-            return null
-        }
-    }
+    // async totalPurchase(seriesId : number) : Promise<number> {
+    //     try{
+    //         const seriesTotalPurchase = await this.purchaseHistory
+    //             .createQueryBuilder('purchaseHistory')
+    //             .where(`purchaseHistory.seriesId = :seriesId`, {seriesId})
+    //             .select(`purchaseHistory.seriesId`)
+    //             .addSelect('COUNT(*) AS count')
+    //             .groupBy('purchaseHistory.seriesId')
+    //             .getRawOne();
+    //
+    //         return seriesTotalPurchase.count;
+    //     }catch (e) {
+    //         console.log(e);
+    //         return null
+    //     }
+    // }
 
 }

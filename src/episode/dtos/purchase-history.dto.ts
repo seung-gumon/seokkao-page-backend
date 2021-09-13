@@ -1,4 +1,5 @@
 import {Field, InputType, Int, ObjectType} from "@nestjs/graphql";
+import {Series} from "../../series/entities/series.entity";
 
 
 @InputType()
@@ -21,4 +22,7 @@ export class PurchaseHistoryOutput {
 
     @Field(() => [Int])
     count: number[]
+
+    @Field(() => Series)
+    series: Series
 }

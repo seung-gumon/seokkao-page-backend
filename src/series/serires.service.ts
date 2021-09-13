@@ -134,7 +134,7 @@ export class SeriresService {
     }
 
 
-    async findByIdSeries(seriesId : number) : Promise<Series> {
+    async findByIdSeries(seriesId : number) : Promise<Series | null> {
         try{
             return await this.series.findOne({
                 where :{
@@ -143,7 +143,6 @@ export class SeriresService {
                 relations : ['episode','writer','category'],
             })
         }catch (e) {
-            console.log(e);
             return null
         }
     }
