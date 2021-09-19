@@ -14,7 +14,7 @@ import {PurChaseHistory} from "../episode/entities/purchaseHistory.entity";
 
 
 @Injectable()
-export class SeriresService {
+export class SeriesService {
     constructor(
         @InjectRepository(Series)
         private readonly series: Repository<Series>,

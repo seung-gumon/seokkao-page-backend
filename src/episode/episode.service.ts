@@ -7,6 +7,8 @@ import {PurChaseHistoryInput, PurchaseHistoryOutput} from "./dtos/purchase-histo
 import * as moment from 'moment';
 import {User} from "../user/entities/user.entity";
 import {Series} from "../series/entities/series.entity";
+import {EpisodeInput} from "./dtos/episodeInput.dto";
+import {CoreOutput} from "../common/dtos/core.dto";
 
 @Injectable()
 export class EpisodeService {
@@ -84,6 +86,23 @@ export class EpisodeService {
         } catch (e) {
             console.log(e);
             return null
+        }
+    }
+
+
+    async updateEpisode(episodeInput : EpisodeInput) : Promise<CoreOutput> {
+        try{
+            await this.episode.update({id : episodeInput.id} , {
+                contents : episodeInput.contents
+            })
+
+            return {
+                ok : true
+            }
+        }catch (e) {
+            return {
+                ok : false
+            }
         }
     }
 

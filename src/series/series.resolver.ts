@@ -1,5 +1,5 @@
 import {Args, Mutation, Query, Resolver} from "@nestjs/graphql";
-import {SeriresService} from "./serires.service";
+import {SeriesService} from "./series.service";
 import {Series} from "./entities/series.entity";
 import {CoreOutput} from "../common/dtos/core.dto";
 import {CreateSeriesInput} from "./dtos/create-series.dto";
@@ -13,7 +13,7 @@ import {MySeriesOutputDto} from "./dtos/my-series-output.dto";
 @Resolver()
 export class SeriesResolver {
     constructor(
-        private readonly seriesService: SeriresService
+        private readonly seriesService: SeriesService
     ) {
     }
 

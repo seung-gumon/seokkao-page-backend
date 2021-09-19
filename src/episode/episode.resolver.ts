@@ -5,6 +5,8 @@ import {PurChaseHistoryInput, PurchaseHistoryOutput} from "./dtos/purchase-histo
 import {AuthUser} from "../auth/auth-user.decorator";
 import {User} from "../user/entities/user.entity";
 import {Roles} from "../auth/role.decorator";
+import {CoreOutput} from "../common/dtos/core.dto";
+import {EpisodeInput} from "./dtos/episodeInput.dto";
 
 
 
@@ -24,6 +26,16 @@ export class EpisodeResolver {
     ) : Promise<Episode | null> {
         return await this.episodeService.adminFindByIdEpisode(seriesId, episodeId, authUser);
     }
+
+
+    @Roles(['Novelist', 'Cartoonist'])
+    @Mutation(() => CoreOutput)
+    async updateEpisode(
+        @Args('episodeInput') episodeInput : EpisodeInput,
+    ) : Promise<CoreOutput> {
+        return await this.episodeService.updateEpisode(episodeInput)
+    }
+
 
     @Roles(['Novelist', 'Cartoonist'])
     @Query(() => PurchaseHistoryOutput)
