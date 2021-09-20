@@ -7,7 +7,7 @@ import {PurChaseHistoryInput, PurchaseHistoryOutput} from "./dtos/purchase-histo
 import * as moment from 'moment';
 import {User} from "../user/entities/user.entity";
 import {Series} from "../series/entities/series.entity";
-import {EpisodeInput} from "./dtos/episodeInput.dto";
+import {CreateEpisodeInput, EpisodeInput} from "./dtos/episodeInput.dto";
 import {CoreOutput} from "../common/dtos/core.dto";
 
 @Injectable()
@@ -28,7 +28,7 @@ export class EpisodeService {
             const episode = await this.episode.findOne({
                 where: {
                     series: seriesId,
-                    episode: episodeId,
+                    id: episodeId,
                 },
                 relations: ['series']
             });
@@ -84,7 +84,6 @@ export class EpisodeService {
                 series,
             }
         } catch (e) {
-            console.log(e);
             return null
         }
     }
@@ -92,6 +91,7 @@ export class EpisodeService {
 
     async updateEpisode(episodeInput : EpisodeInput) : Promise<CoreOutput> {
         try{
+            //TODO : 작가 아이디가 같아야 됌
             await this.episode.update({id : episodeInput.id} , {
                 contents : episodeInput.contents
             })
@@ -106,5 +106,35 @@ export class EpisodeService {
         }
     }
 
+
+    async createEpisode(createEpisodeInput: CreateEpisodeInput, authUser: User): Promise<CoreOutput> {
+        try {
+            const findSeries = await this.series.findOne({
+                id: createEpisodeInput.seriesId,
+            })
+
+            if (!findSeries && findSeries.writerId !== authUser.id) {
+                return {
+                    ok: false,
+                    error: "권한이 없습니다."
+                }
+            }
+
+            await this.episode.save(await this.episode.create({
+                ...createEpisodeInput,
+                series : findSeries
+            }));
+
+            return {
+                ok: true
+            }
+        } catch(e) {
+            console.log(e);
+            return {
+                ok: false,
+                error: "글을 생성 할 수 없습니다."
+            }
+        }
+    }
 
 }

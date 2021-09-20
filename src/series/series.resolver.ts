@@ -42,8 +42,8 @@ export class SeriesResolver {
 
     @Query(() => OrderByPopularOutput)
     async orderByPopular(
-        @Args('today') today : string
-    ) : Promise<OrderByPopularOutput> {
+        @Args('today') today: string
+    ): Promise<OrderByPopularOutput> {
         return await this.seriesService.orderByPopular(today)
     }
 
@@ -52,11 +52,11 @@ export class SeriesResolver {
     @Roles(['Novelist', 'Cartoonist'])
     async mySeries(
         @AuthUser() authUser: User
-    ) : Promise<MySeriesOutputDto> {
+    ): Promise<MySeriesOutputDto> {
         return await this.seriesService.mySeries(authUser)
     }
 
-    @Query(() => Series, {nullable : true})
+    @Query(() => Series, {nullable: true})
     async findByIdSeries(
         @Args('seriesId') seriesId: number
     ): Promise<Series | null> {
@@ -64,6 +64,15 @@ export class SeriesResolver {
     }
 
 
+    @Roles(['Novelist', 'Cartoonist'])
+    @Mutation(() => CoreOutput)
+    async updateNovelProfileImage(
+        @Args('seriesId') seriesId: number,
+        @Args('novelProfileImage') novelProfileImage: string,
+        @AuthUser() authUser: User
+    ): Promise<CoreOutput> {
+        return await this.seriesService.updateNovelProfileImage(seriesId, novelProfileImage, authUser)
+    }
 
 
 }

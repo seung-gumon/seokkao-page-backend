@@ -6,7 +6,7 @@ import {AuthUser} from "../auth/auth-user.decorator";
 import {User} from "../user/entities/user.entity";
 import {Roles} from "../auth/role.decorator";
 import {CoreOutput} from "../common/dtos/core.dto";
-import {EpisodeInput} from "./dtos/episodeInput.dto";
+import {CreateEpisodeInput, EpisodeInput} from "./dtos/episodeInput.dto";
 
 
 
@@ -35,6 +35,16 @@ export class EpisodeResolver {
     ) : Promise<CoreOutput> {
         return await this.episodeService.updateEpisode(episodeInput)
     }
+
+    @Roles(['Novelist', 'Cartoonist'])
+    @Mutation(() => CoreOutput)
+    async createEpisode(
+        @Args('episodeCreateInput') createEpisodeInput : CreateEpisodeInput,
+        @AuthUser() authUser : User
+    ) : Promise<CoreOutput> {
+        return await this.episodeService.createEpisode(createEpisodeInput , authUser)
+    }
+
 
 
     @Roles(['Novelist', 'Cartoonist'])

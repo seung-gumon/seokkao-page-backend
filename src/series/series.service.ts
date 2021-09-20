@@ -23,9 +23,9 @@ export class SeriesService {
         @InjectRepository(User)
         private readonly user: Repository<User>,
         @InjectRepository(Episode)
-        private readonly episode : Repository<Episode>,
+        private readonly episode: Repository<Episode>,
         @InjectRepository(PurChaseHistory)
-        private readonly purChaseHistory : Repository<PurChaseHistory>
+        private readonly purChaseHistory: Repository<PurChaseHistory>
     ) {
     }
 
@@ -122,9 +122,9 @@ export class SeriesService {
         try {
             const writerUser = await this.user.findOne({
                 where: {
-                    id : writer.id
+                    id: writer.id
                 },
-                relations : ['series','series.category']
+                relations: ['series', 'series.category']
             });
 
             return writerUser
@@ -134,18 +134,48 @@ export class SeriesService {
     }
 
 
-    async findByIdSeries(seriesId : number) : Promise<Series | null> {
-        try{
+    async findByIdSeries(seriesId: number): Promise<Series | null> {
+        try {
             return await this.series.findOne({
-                where :{
-                    id : seriesId
+                where: {
+                    id: seriesId
                 },
-                relations : ['episode','writer','category'],
+                relations: ['episode', 'writer', 'category'],
             })
-        }catch (e) {
+        } catch (e) {
             return null
         }
     }
 
+
+    async updateNovelProfileImage(seriesId, profileImage: string, authUser: User): Promise<CoreOutput> {
+        try {
+            const series = await this.series.findOne({
+                where: {
+                    id: seriesId
+                },
+            });
+
+            if (!series || series.writerId !== authUser.id) {
+                return {
+                    ok: true,
+                    error: "시리즈를 찾을 수 없거나 권한이 없는 계정입니다."
+                }
+            }
+
+            await this.series.update({id : seriesId} , {
+                thumbnail : profileImage
+            })
+
+            return {
+                ok: true
+            }
+        } catch (e) {
+            return {
+                ok: false,
+                error: "업데이트후 수정해주세요"
+            }
+        }
+    }
 
 }
