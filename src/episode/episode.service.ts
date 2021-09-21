@@ -50,8 +50,23 @@ export class EpisodeService {
                 where: {
                     id: purChaseHistoryInput.seriesId
                 },
-                relations: ['episode', 'category'],
-            })
+                relations: ['category'],
+            });
+
+
+            const episodes = await this.episode.find({
+                where : {
+                    series
+                },
+                order : {episode : "DESC"}
+            });
+
+
+            const unionSeriesEpisodes = {
+                ...series ,
+                episode : [...episodes]
+            }
+
 
             if (series.writerId !== authUser.id) {
                 return null
@@ -69,6 +84,7 @@ export class EpisodeService {
                 .getRawMany();
 
 
+
             const date = [];
             const count = [];
 
@@ -81,7 +97,7 @@ export class EpisodeService {
             return {
                 date,
                 count,
-                series,
+                series : unionSeriesEpisodes,
             }
         } catch (e) {
             return null
@@ -89,9 +105,23 @@ export class EpisodeService {
     }
 
 
-    async updateEpisode(episodeInput : EpisodeInput) : Promise<CoreOutput> {
+    async updateEpisode(episodeInput : EpisodeInput , authUser : User) : Promise<CoreOutput> {
         try{
-            //TODO : 작가 아이디가 같아야 됌
+
+            const episodeWriterUserId = await this.episode
+                .createQueryBuilder('episode')
+                .leftJoinAndSelect('episode.series' , 'series')
+                .where(`episode.id = :id` , {id : episodeInput.id})
+                .select(['series.writerId'])
+                .getRawOne()
+
+            if (episodeWriterUserId.writerId !== authUser.id) {
+                return {
+                    ok : false,
+                    error : "권한이 없습니다."
+                }
+            }
+
             await this.episode.update({id : episodeInput.id} , {
                 contents : episodeInput.contents
             })

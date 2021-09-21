@@ -32,8 +32,9 @@ export class EpisodeResolver {
     @Mutation(() => CoreOutput)
     async updateEpisode(
         @Args('episodeInput') episodeInput : EpisodeInput,
+        @AuthUser() authUser : User
     ) : Promise<CoreOutput> {
-        return await this.episodeService.updateEpisode(episodeInput)
+        return await this.episodeService.updateEpisode(episodeInput , authUser)
     }
 
     @Roles(['Novelist', 'Cartoonist'])

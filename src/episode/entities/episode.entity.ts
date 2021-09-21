@@ -1,5 +1,5 @@
 import {Field, InputType, Int, ObjectType} from "@nestjs/graphql";
-import {Column, Entity, ManyToOne,} from "typeorm";
+import {Column, Entity, ManyToOne, RelationId,} from "typeorm";
 import {CoreEntity} from "../../common/entities/core.entity";
 import {Series} from "../../series/entities/series.entity";
 
@@ -14,6 +14,8 @@ export class Episode extends CoreEntity {
     @Column()
     @Field(() => Int)
     episode: number;
+
+
 
 
     @Column("text", {array: true})
