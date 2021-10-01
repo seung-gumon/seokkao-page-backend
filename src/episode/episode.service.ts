@@ -16,13 +16,13 @@ import {BuyEpisodeOutput} from "./dtos/buyEpisodeOutput.dto";
 export class EpisodeService {
     constructor(
         @InjectRepository(Series)
-        private readonly series : Repository<Series>,
+        private readonly series: Repository<Series>,
         @InjectRepository(Episode)
-        private readonly episode : Repository<Episode>,
+        private readonly episode: Repository<Episode>,
         @InjectRepository(PurChaseHistory)
-        private readonly purchaseHistory : Repository<PurChaseHistory>,
+        private readonly purchaseHistory: Repository<PurChaseHistory>,
         @InjectRepository(User)
-        private readonly user : Repository<User>
+        private readonly user: Repository<User>
     ) {
     }
 
@@ -59,16 +59,16 @@ export class EpisodeService {
 
 
             const episodes = await this.episode.find({
-                where : {
+                where: {
                     series
                 },
-                order : {episode : "DESC"}
+                order: {episode: "DESC"}
             });
 
 
             const unionSeriesEpisodes = {
-                ...series ,
-                episode : [...episodes]
+                ...series,
+                episode: [...episodes]
             }
 
 
@@ -88,7 +88,6 @@ export class EpisodeService {
                 .getRawMany();
 
 
-
             const date = [];
             const count = [];
 
@@ -101,7 +100,7 @@ export class EpisodeService {
             return {
                 date,
                 count,
-                series : unionSeriesEpisodes,
+                series: unionSeriesEpisodes,
             }
         } catch (e) {
             return null
@@ -109,33 +108,33 @@ export class EpisodeService {
     }
 
 
-    async updateEpisode(episodeInput : EpisodeInput , authUser : User) : Promise<CoreOutput> {
-        try{
+    async updateEpisode(episodeInput: EpisodeInput, authUser: User): Promise<CoreOutput> {
+        try {
 
             const episodeWriterUserId = await this.episode
                 .createQueryBuilder('episode')
-                .leftJoinAndSelect('episode.series' , 'series')
-                .where(`episode.id = :id` , {id : episodeInput.id})
+                .leftJoinAndSelect('episode.series', 'series')
+                .where(`episode.id = :id`, {id: episodeInput.id})
                 .select(['series.writerId'])
                 .getRawOne()
 
             if (episodeWriterUserId.writerId !== authUser.id) {
                 return {
-                    ok : false,
-                    error : "권한이 없습니다."
+                    ok: false,
+                    error: "권한이 없습니다."
                 }
             }
 
-            await this.episode.update({id : episodeInput.id} , {
-                contents : episodeInput.contents
+            await this.episode.update({id: episodeInput.id}, {
+                contents: episodeInput.contents
             })
 
             return {
-                ok : true
+                ok: true
             }
-        }catch (e) {
+        } catch (e) {
             return {
-                ok : false
+                ok: false
             }
         }
     }
@@ -144,13 +143,11 @@ export class EpisodeService {
     async createEpisode(createEpisodeInput: CreateEpisodeInput, authUser: User): Promise<CoreOutput> {
         try {
             const findSeries = await this.series.findOne({
-                where : {
+                where: {
                     id: createEpisodeInput.seriesId,
                 },
-                relations : ['category']
+                relations: ['category']
             })
-
-
 
 
             if (!findSeries && findSeries.writerId !== authUser.id) {
@@ -162,14 +159,14 @@ export class EpisodeService {
 
             await this.episode.save(await this.episode.create({
                 ...createEpisodeInput,
-                howMuchCoin : findSeries.category.mainCategory === 'Novel' ? 2 : 3,
-                series : findSeries
+                howMuchCoin: findSeries.category.mainCategory === 'Novel' ? 2 : 3,
+                series: findSeries
             }));
 
             return {
                 ok: true
             }
-        } catch(e) {
+        } catch (e) {
             console.log(e);
             return {
                 ok: false,
@@ -183,19 +180,19 @@ export class EpisodeService {
         try {
 
             const purchaseHistory = await this.purchaseHistory.findOne({
-                where : {
-                    whoPurchase : authUser.id,
-                    Series : buyEpisodeInput.seriesId,
-                    episode : buyEpisodeInput.episodeId
+                where: {
+                    whoPurchase: authUser.id,
+                    Series: buyEpisodeInput.seriesId,
+                    episode: buyEpisodeInput.episodeId
                 },
-                select : ['id']
+                select: ['id']
             });
 
 
             if (purchaseHistory) {
                 return {
                     ok: true,
-                    buyEpisodeId : buyEpisodeInput.episodeId
+                    buyEpisodeId: buyEpisodeInput.episodeId
                 }
             }
 
@@ -223,8 +220,8 @@ export class EpisodeService {
 
 
             const series = await this.series.findOne({
-                where : {
-                    id : buyEpisodeInput.seriesId
+                where: {
+                    id: buyEpisodeInput.seriesId
                 }
             })
 
@@ -234,26 +231,49 @@ export class EpisodeService {
             });
 
 
-
             await this.purchaseHistory.save(await this.purchaseHistory.create({
-                Series : series,
-                episode : episode,
-                whoPurchase : authUser,
-                createDate : moment(new Date()).format('YYYY-MM-DD')
+                Series: series,
+                episode: episode,
+                whoPurchase: authUser,
+                createDate: moment(new Date()).format('YYYY-MM-DD')
             }));
 
 
             return {
                 ok: true,
-                buyEpisodeId : episode.id
+                buyEpisodeId: episode.id
             }
 
         } catch (e) {
-            console.log(e);
             return {
                 ok: false,
                 error: "구매 할 수 없습니다"
             }
+        }
+    }
+
+
+    async getPurchaseHistory(authUser: User, seriesId: number): Promise<number[]> {
+        try {
+            if (!authUser) {
+                return []
+            }
+
+
+            const history = await this.purchaseHistory.find({
+                where: {
+                    Series: seriesId,
+                    whoPurchase: authUser
+                },
+                relations : ['episode'],
+            });
+
+
+            const onlyEpisodeId = await history.map((history) => history.episode.id);
+            return onlyEpisodeId
+        } catch (e) {
+            console.log(e);
+            return []
         }
     }
 

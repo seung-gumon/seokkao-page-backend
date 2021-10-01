@@ -59,6 +59,15 @@ export class EpisodeResolver {
         return await this.episodeService.seriesDashBoardData(purChaseHistoryInput,authUser)
     }
 
+    @Roles(['Novelist', 'Cartoonist'])
+    @Query(() => [Int])
+    async getPurchaseHistory(
+        @AuthUser() authUser : User,
+        @Args('seriesId') seriesId : number
+    ) : Promise<number[]> {
+        return await this.episodeService.getPurchaseHistory(authUser,seriesId)
+    }
+
 
 
     @Mutation(() => BuyEpisodeOutput)
