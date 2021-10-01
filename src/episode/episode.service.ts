@@ -141,8 +141,14 @@ export class EpisodeService {
     async createEpisode(createEpisodeInput: CreateEpisodeInput, authUser: User): Promise<CoreOutput> {
         try {
             const findSeries = await this.series.findOne({
-                id: createEpisodeInput.seriesId,
+                where : {
+                    id: createEpisodeInput.seriesId,
+                },
+                relations : ['category']
             })
+
+
+
 
             if (!findSeries && findSeries.writerId !== authUser.id) {
                 return {
@@ -153,6 +159,7 @@ export class EpisodeService {
 
             await this.episode.save(await this.episode.create({
                 ...createEpisodeInput,
+                howMuchCoin : findSeries.category.mainCategory === 'Novel' ? 2 : 3,
                 series : findSeries
             }));
 
@@ -169,16 +176,36 @@ export class EpisodeService {
     }
 
 
-    async buyEpisode(authUser: User, buyEpisodeInput: BuyEpisodeInput) {
+    async buyEpisode(authUser: User, buyEpisodeInput: BuyEpisodeInput): Promise<CoreOutput> {
         try {
+            return {
+                ok: true
+            }
             if (!authUser) {
                 return {
-                    ok : false,
-                    error : "로그인을 해주세요!"
+                    ok: false,
+                    error: "로그인을 해주세요!"
                 }
             }
 
+            const episode = await this.episode.findOne({
+                where: {
+                    id: buyEpisodeInput.episodeId,
+                    series: buyEpisodeInput.seriesId
+                },
+                select: ['howMuchCoin']
+            });
 
+            if (episode.howMuchCoin > authUser.coin) {
+                return {
+                    ok: false,
+                    error: "코인이 부족합니다."
+                }
+            }
+
+            return {
+                ok: true
+            }
 
         } catch (e) {
             return {

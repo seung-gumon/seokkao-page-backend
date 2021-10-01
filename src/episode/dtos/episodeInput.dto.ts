@@ -8,7 +8,7 @@ export class EpisodeInput extends PickType(Episode, ['id', 'contents']) {
 
 
 @InputType('episodeCreateInput')
-export class CreateEpisodeInput extends OmitType(Episode, ['series','id','createdAt','updatedAt']) {
+export class CreateEpisodeInput extends OmitType(Episode, ['series','id','createdAt','updatedAt','howMuchCoin']) {
     @Field(() => Int)
     seriesId: number
 }
