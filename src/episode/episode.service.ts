@@ -9,6 +9,7 @@ import {User} from "../user/entities/user.entity";
 import {Series} from "../series/entities/series.entity";
 import {CreateEpisodeInput, EpisodeInput} from "./dtos/episodeInput.dto";
 import {CoreOutput} from "../common/dtos/core.dto";
+import {BuyEpisodeInput} from "./dtos/buyEpisodeInput.dto";
 
 @Injectable()
 export class EpisodeService {
@@ -166,5 +167,26 @@ export class EpisodeService {
             }
         }
     }
+
+
+    async buyEpisode(authUser: User, buyEpisodeInput: BuyEpisodeInput) {
+        try {
+            if (!authUser) {
+                return {
+                    ok : false,
+                    error : "로그인을 해주세요!"
+                }
+            }
+
+
+
+        } catch (e) {
+            return {
+                ok: false,
+                error: "구매 할 수 없습니다"
+            }
+        }
+    }
+
 
 }

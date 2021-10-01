@@ -4,7 +4,7 @@ import {CoreEntity} from "../../common/entities/core.entity";
 import {Series} from "../../series/entities/series.entity";
 import {Episode} from "./episode.entity";
 import {User} from "../../user/entities/user.entity";
-import * as moment from 'moment';
+import * as moment from "moment";
 
 
 @InputType('PurchaseHistoryInput', {isAbstract: true})
@@ -12,20 +12,19 @@ import * as moment from 'moment';
 @Entity('PurchaseHistory')
 export class PurChaseHistory extends CoreEntity {
 
-    @ManyToOne(() => Series, Series => Series.id)
     @Field(() => Int)
-    Series: number;
+    @ManyToOne(() => Series, Series => Series.id)
+    Series: Series;
 
-    @Field(() => [Episode])
+    @Field(() => Episode)
     @ManyToOne(() => Episode, Episode => Episode.id)
-    episode: Episode[];
+    episode: Episode;
 
 
     @Field(() => User)
-    @ManyToOne(() => User, {onDelete: "CASCADE"})
-    writer: User
+    @ManyToOne(() => User, User => User.id)
+    whoPurchase: User
 
     @Column({default : moment(new Date()).format('YYYY-MM-DD')})
     createDate : string
-
 }

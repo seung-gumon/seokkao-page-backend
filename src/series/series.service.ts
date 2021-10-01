@@ -136,12 +136,14 @@ export class SeriesService {
 
     async findByIdSeries(seriesId: number): Promise<Series | null> {
         try {
-            return await this.series.findOne({
-                where: {
-                    id: seriesId
-                },
-                relations: ['episode', 'writer', 'category'],
-            })
+            return await this.series
+                .createQueryBuilder('series')
+                .leftJoinAndSelect('series.episode', 'episode')
+                .leftJoinAndSelect('series.writer', 'writer')
+                .leftJoinAndSelect('series.category', 'category')
+                .where(`series.id = :seriesId`, {seriesId})
+                .orderBy('episode.id', "DESC")
+                .getOne();
         } catch (e) {
             return null
         }
