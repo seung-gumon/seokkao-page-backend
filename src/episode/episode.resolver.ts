@@ -8,6 +8,7 @@ import {Roles} from "../auth/role.decorator";
 import {CoreOutput} from "../common/dtos/core.dto";
 import {CreateEpisodeInput, EpisodeInput} from "./dtos/episodeInput.dto";
 import {BuyEpisodeInput} from "./dtos/buyEpisodeInput.dto";
+import {BuyEpisodeOutput} from "./dtos/buyEpisodeOutput.dto";
 
 
 
@@ -60,11 +61,11 @@ export class EpisodeResolver {
 
 
 
-    @Mutation(() => CoreOutput)
+    @Mutation(() => BuyEpisodeOutput)
     async buyEpisode(
         @AuthUser() authUser : User,
         @Args('buyEpisodeInput') buyEpisodeInput : BuyEpisodeInput
-    ) : Promise<CoreOutput> {
+    ) : Promise<BuyEpisodeOutput> {
         return await this.episodeService.buyEpisode(authUser , buyEpisodeInput)
     }
 

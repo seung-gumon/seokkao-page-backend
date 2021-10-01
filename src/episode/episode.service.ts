@@ -10,6 +10,7 @@ import {Series} from "../series/entities/series.entity";
 import {CreateEpisodeInput, EpisodeInput} from "./dtos/episodeInput.dto";
 import {CoreOutput} from "../common/dtos/core.dto";
 import {BuyEpisodeInput} from "./dtos/buyEpisodeInput.dto";
+import {BuyEpisodeOutput} from "./dtos/buyEpisodeOutput.dto";
 
 @Injectable()
 export class EpisodeService {
@@ -19,7 +20,9 @@ export class EpisodeService {
         @InjectRepository(Episode)
         private readonly episode : Repository<Episode>,
         @InjectRepository(PurChaseHistory)
-        private readonly purchaseHistory : Repository<PurChaseHistory>
+        private readonly purchaseHistory : Repository<PurChaseHistory>,
+        @InjectRepository(User)
+        private readonly user : Repository<User>
     ) {
     }
 
@@ -176,11 +179,27 @@ export class EpisodeService {
     }
 
 
-    async buyEpisode(authUser: User, buyEpisodeInput: BuyEpisodeInput): Promise<CoreOutput> {
+    async buyEpisode(authUser: User, buyEpisodeInput: BuyEpisodeInput): Promise<BuyEpisodeOutput> {
         try {
-            return {
-                ok: true
+
+            const purchaseHistory = await this.purchaseHistory.findOne({
+                where : {
+                    whoPurchase : authUser.id,
+                    Series : buyEpisodeInput.seriesId,
+                    episode : buyEpisodeInput.episodeId
+                },
+                select : ['id']
+            });
+
+
+            if (purchaseHistory) {
+                return {
+                    ok: true,
+                    buyEpisodeId : buyEpisodeInput.episodeId
+                }
             }
+
+
             if (!authUser) {
                 return {
                     ok: false,
@@ -193,7 +212,6 @@ export class EpisodeService {
                     id: buyEpisodeInput.episodeId,
                     series: buyEpisodeInput.seriesId
                 },
-                select: ['howMuchCoin']
             });
 
             if (episode.howMuchCoin > authUser.coin) {
@@ -203,11 +221,35 @@ export class EpisodeService {
                 }
             }
 
+
+            const series = await this.series.findOne({
+                where : {
+                    id : buyEpisodeInput.seriesId
+                }
+            })
+
+            await this.user.update({id: authUser.id}, {
+                ...authUser,
+                coin: authUser.coin - episode.howMuchCoin
+            });
+
+
+
+            await this.purchaseHistory.save(await this.purchaseHistory.create({
+                Series : series,
+                episode : episode,
+                whoPurchase : authUser,
+                createDate : moment(new Date()).format('YYYY-MM-DD')
+            }));
+
+
             return {
-                ok: true
+                ok: true,
+                buyEpisodeId : episode.id
             }
 
         } catch (e) {
+            console.log(e);
             return {
                 ok: false,
                 error: "구매 할 수 없습니다"

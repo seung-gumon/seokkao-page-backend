@@ -5,9 +5,10 @@ import {EpisodeService} from "./episode.service";
 import {EpisodeResolver} from "./episode.resolver";
 import {PurChaseHistory} from "./entities/purchaseHistory.entity";
 import {Series} from "../series/entities/series.entity";
+import {User} from "../user/entities/user.entity";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Episode , PurChaseHistory,Series])],
+    imports: [TypeOrmModule.forFeature([Episode , PurChaseHistory,Series,User])],
     exports: [],
     providers: [EpisodeResolver,EpisodeService]
 })
