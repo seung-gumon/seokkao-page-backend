@@ -11,6 +11,7 @@ import {CreateEpisodeInput, EpisodeInput} from "./dtos/episodeInput.dto";
 import {CoreOutput} from "../common/dtos/core.dto";
 import {BuyEpisodeInput} from "./dtos/buyEpisodeInput.dto";
 import {BuyEpisodeOutput} from "./dtos/buyEpisodeOutput.dto";
+import {seriesEpisodeIdsInput} from "./dtos/seriesEpisodeIdsInput.dto";
 
 @Injectable()
 export class EpisodeService {
@@ -179,6 +180,13 @@ export class EpisodeService {
     async buyEpisode(authUser: User, buyEpisodeInput: BuyEpisodeInput): Promise<BuyEpisodeOutput> {
         try {
 
+            if (!authUser) {
+                return {
+                    ok: false,
+                    error: "로그인을 해주세요!"
+                }
+            }
+
             const purchaseHistory = await this.purchaseHistory.findOne({
                 where: {
                     whoPurchase: authUser.id,
@@ -196,13 +204,6 @@ export class EpisodeService {
                 }
             }
 
-
-            if (!authUser) {
-                return {
-                    ok: false,
-                    error: "로그인을 해주세요!"
-                }
-            }
 
             const episode = await this.episode.findOne({
                 where: {
@@ -245,6 +246,7 @@ export class EpisodeService {
             }
 
         } catch (e) {
+            console.log(e);
             return {
                 ok: false,
                 error: "구매 할 수 없습니다"
@@ -265,7 +267,7 @@ export class EpisodeService {
                     Series: seriesId,
                     whoPurchase: authUser
                 },
-                relations : ['episode'],
+                relations: ['episode'],
             });
 
 
@@ -277,5 +279,44 @@ export class EpisodeService {
         }
     }
 
+
+    async getEpisodeBySeriesIdAndEpisodeId(ids: seriesEpisodeIdsInput , authUser): Promise<Episode> {
+        try {
+
+            const purchaseHistory = await this.purchaseHistory.findOne({
+                where: {
+                    Series: ids.seriesId,
+                    episode: ids.episodeId,
+                    whoPurchase : authUser,
+                },
+                relations : ['episode']
+            });
+
+            if (purchaseHistory.episode.episode === 1) {
+                return await this.episode.findOne({
+                    where: {
+                        series: ids.seriesId,
+                        id: ids.episodeId,
+                    },
+                    relations : ['series']
+                });
+            }
+
+            if (!purchaseHistory) {
+                return null
+            }
+
+            return await this.episode.findOne({
+                where: {
+                    series: ids.seriesId,
+                    id: ids.episodeId,
+                },
+                relations : ['series']
+            });
+
+        } catch (e) {
+            return null
+        }
+    }
 
 }

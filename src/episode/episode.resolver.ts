@@ -9,6 +9,7 @@ import {CoreOutput} from "../common/dtos/core.dto";
 import {CreateEpisodeInput, EpisodeInput} from "./dtos/episodeInput.dto";
 import {BuyEpisodeInput} from "./dtos/buyEpisodeInput.dto";
 import {BuyEpisodeOutput} from "./dtos/buyEpisodeOutput.dto";
+import {seriesEpisodeIdsInput} from "./dtos/seriesEpisodeIdsInput.dto";
 
 
 
@@ -76,6 +77,16 @@ export class EpisodeResolver {
         @Args('buyEpisodeInput') buyEpisodeInput : BuyEpisodeInput
     ) : Promise<BuyEpisodeOutput> {
         return await this.episodeService.buyEpisode(authUser , buyEpisodeInput)
+    }
+
+
+    @Roles(['User','Novelist','Cartoonist'])
+    @Query(() => Episode , {nullable : true})
+    async getEpisodeBySeriesIdAndEpisodeId(
+        @AuthUser()authUser: User,
+        @Args('seriesEpisodeIdsInput') seriesEpisodeIdsInput : seriesEpisodeIdsInput
+    ) : Promise<Episode | null> {
+        return await this.episodeService.getEpisodeBySeriesIdAndEpisodeId(seriesEpisodeIdsInput , authUser)
     }
 
 
