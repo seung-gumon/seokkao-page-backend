@@ -10,6 +10,7 @@ import {CreateEpisodeInput, EpisodeInput} from "./dtos/episodeInput.dto";
 import {BuyEpisodeInput} from "./dtos/buyEpisodeInput.dto";
 import {BuyEpisodeOutput} from "./dtos/buyEpisodeOutput.dto";
 import {seriesEpisodeIdsInput} from "./dtos/seriesEpisodeIdsInput.dto";
+import {prevOrNextEpisodeInput} from "./dtos/prevOrNextEpisode.dto";
 
 
 
@@ -70,7 +71,7 @@ export class EpisodeResolver {
     }
 
 
-
+    @Roles(['User','Novelist','Cartoonist'])
     @Mutation(() => BuyEpisodeOutput)
     async buyEpisode(
         @AuthUser() authUser : User,
@@ -88,6 +89,20 @@ export class EpisodeResolver {
     ) : Promise<Episode | null> {
         return await this.episodeService.getEpisodeBySeriesIdAndEpisodeId(seriesEpisodeIdsInput , authUser)
     }
+
+
+    @Roles(['User', 'Novelist', 'Cartoonist'])
+    @Mutation(() => BuyEpisodeOutput)
+    async prevOrNextEpisode(
+        @AuthUser() authUser: User,
+        @Args('prevOrNextEpisode') prevOrNextEpisode: prevOrNextEpisodeInput,
+        @Args('prevOrNext') prevOrNext: string
+    ): Promise<BuyEpisodeOutput> {
+        return await this.episodeService.prevOrNextEpisode(authUser, prevOrNextEpisode, prevOrNext)
+    }
+
+
+
 
 
 }

@@ -8,8 +8,9 @@ import {InternalServerError} from "http-errors";
 @ObjectType()
 @Entity('Episode')
 export class Episode extends CoreEntity {
-    @ManyToOne(() => Series, Series => Series.id)
+
     @Field(() => Series)
+    @ManyToOne(() => Series, Series => Series.id)
     series: Series;
 
     @Column()

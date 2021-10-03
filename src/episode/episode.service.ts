@@ -12,6 +12,7 @@ import {CoreOutput} from "../common/dtos/core.dto";
 import {BuyEpisodeInput} from "./dtos/buyEpisodeInput.dto";
 import {BuyEpisodeOutput} from "./dtos/buyEpisodeOutput.dto";
 import {seriesEpisodeIdsInput} from "./dtos/seriesEpisodeIdsInput.dto";
+import {prevOrNextEpisodeInput} from "./dtos/prevOrNextEpisode.dto";
 
 @Injectable()
 export class EpisodeService {
@@ -280,17 +281,18 @@ export class EpisodeService {
     }
 
 
-    async getEpisodeBySeriesIdAndEpisodeId(ids: seriesEpisodeIdsInput , authUser): Promise<Episode> {
+    async getEpisodeBySeriesIdAndEpisodeId(ids: seriesEpisodeIdsInput, authUser): Promise<Episode> {
         try {
 
             const purchaseHistory = await this.purchaseHistory.findOne({
                 where: {
                     Series: ids.seriesId,
                     episode: ids.episodeId,
-                    whoPurchase : authUser,
+                    whoPurchase: authUser,
                 },
-                relations : ['episode']
+                relations: ['episode']
             });
+
 
             if (purchaseHistory.episode.episode === 1) {
                 return await this.episode.findOne({
@@ -298,24 +300,72 @@ export class EpisodeService {
                         series: ids.seriesId,
                         id: ids.episodeId,
                     },
-                    relations : ['series']
+                    relations: ['series']
                 });
-            }
-
-            if (!purchaseHistory) {
+            } else if (!purchaseHistory) {
                 return null
             }
+
 
             return await this.episode.findOne({
                 where: {
                     series: ids.seriesId,
                     id: ids.episodeId,
                 },
-                relations : ['series']
+                relations: ['series']
             });
 
         } catch (e) {
             return null
+        }
+    }
+
+
+    async prevOrNextEpisode(authUser: User, prevOrNextEpisode: prevOrNextEpisodeInput, prevOrNext : string): Promise<BuyEpisodeOutput> {
+        try {
+            const episode = await this.episode.findOne({
+                where : {
+                    series : prevOrNextEpisode.seriesId,
+                    episode : prevOrNextEpisode.episode
+                },
+                relations : ['series']
+            });
+
+            if (prevOrNext === 'next' && !episode) {
+                return {
+                    ok: false,
+                    error: "다음화가 없습니다."
+                }
+            } else if (prevOrNext === 'prev' && !episode) {
+                return {
+                    ok: false,
+                    error: "이전화가 없습니다."
+                }
+            }
+
+            const buyEpisodeInput = {
+                seriesId : episode.series.id,
+                episodeId : episode.id
+            }
+
+            const req = await this.buyEpisode(authUser , buyEpisodeInput);
+
+
+
+            if (req.ok) {
+                return {
+                    ok: true,
+                    error : episode.id + ""
+                }
+            } else {
+                return req
+            }
+
+        } catch (e) {
+            return {
+                ok: false,
+                error: "구매 할 수 없습니다."
+            }
         }
     }
 
