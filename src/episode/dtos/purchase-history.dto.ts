@@ -25,4 +25,7 @@ export class PurchaseHistoryOutput {
 
     @Field(() => Series)
     series: Series
+
+    @Field(() => Int)
+    view : number
 }

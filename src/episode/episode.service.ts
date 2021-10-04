@@ -13,6 +13,7 @@ import {BuyEpisodeInput} from "./dtos/buyEpisodeInput.dto";
 import {BuyEpisodeOutput} from "./dtos/buyEpisodeOutput.dto";
 import {seriesEpisodeIdsInput} from "./dtos/seriesEpisodeIdsInput.dto";
 import {prevOrNextEpisodeInput} from "./dtos/prevOrNextEpisode.dto";
+import {toArray} from "rxjs";
 
 @Injectable()
 export class EpisodeService {
@@ -56,7 +57,7 @@ export class EpisodeService {
                 where: {
                     id: purChaseHistoryInput.seriesId
                 },
-                relations: ['category'],
+                relations: ['category','view'],
             });
 
 
@@ -72,6 +73,8 @@ export class EpisodeService {
                 ...series,
                 episode: [...episodes]
             }
+
+
 
 
             if (series.writerId !== authUser.id) {
@@ -93,18 +96,22 @@ export class EpisodeService {
             const date = [];
             const count = [];
 
+
             purchaseHistory.forEach((item) => {
                 date.push(item.purchaseHistory_createDate);
                 count.push(+item.count)
             });
 
 
+
             return {
                 date,
                 count,
                 series: unionSeriesEpisodes,
+                view : series.view ? series.view.length : 0
             }
         } catch (e) {
+            console.log(e);
             return null
         }
     }
