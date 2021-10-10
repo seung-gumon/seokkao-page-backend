@@ -75,4 +75,15 @@ export class SeriesResolver {
     }
 
 
+    @Roles(['Novelist', 'Cartoonist'])
+    @Mutation(() => CoreOutput)
+    async updateSerialization(
+        @Args('seriesId') seriesId: number,
+        @Args('day') day: string,
+        @AuthUser() authUser : User
+    ) : Promise<CoreOutput> {
+        return await this.seriesService.updateSerialization(seriesId , day , authUser);
+    }
+
+
 }

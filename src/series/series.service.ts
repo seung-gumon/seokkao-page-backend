@@ -11,6 +11,7 @@ import {OrderByPopularOutput} from "./dtos/order-by-popular.dto";
 import {MySeriesOutputDto} from "./dtos/my-series-output.dto";
 import {Episode} from "../episode/entities/episode.entity";
 import {PurChaseHistory} from "../episode/entities/purchaseHistory.entity";
+import {SeriesRepository} from "./repository/series.repository";
 
 
 @Injectable()
@@ -18,6 +19,7 @@ export class SeriesService {
     constructor(
         @InjectRepository(Series)
         private readonly series: Repository<Series>,
+        private readonly customSeriesRepository : SeriesRepository,
         @InjectRepository(Category)
         private readonly category: Repository<Category>,
         @InjectRepository(User)
@@ -152,21 +154,13 @@ export class SeriesService {
 
     async updateNovelProfileImage(seriesId, profileImage: string, authUser: User): Promise<CoreOutput> {
         try {
-            const series = await this.series.findOne({
-                where: {
-                    id: seriesId
-                },
-            });
-
-            if (!series || series.writerId !== authUser.id) {
-                return {
-                    ok: true,
-                    error: "시리즈를 찾을 수 없거나 권한이 없는 계정입니다."
-                }
+            const validationCheck = await this.customSeriesRepository.adminValidationCheck(seriesId, authUser);
+            if (!validationCheck.ok) {
+                return validationCheck
             }
 
-            await this.series.update({id : seriesId} , {
-                thumbnail : profileImage
+            await this.series.update({id: seriesId}, {
+                thumbnail: profileImage
             })
 
             return {
@@ -179,5 +173,33 @@ export class SeriesService {
             }
         }
     }
+
+
+    async updateSerialization(seriesId: number, day: string, authUser: User): Promise<CoreOutput> {
+        try {
+            const validationCheck = await this.customSeriesRepository.adminValidationCheck(seriesId, authUser);
+            if (!validationCheck.ok) {
+                return validationCheck
+            }
+
+            await this.series.update({id: seriesId}, {
+                serialization: day
+            })
+
+            return {
+                ok: true
+            }
+        } catch (e) {
+            return {
+                ok: false,
+                error: "요일 업데이트 하지 못하였습니다."
+            }
+        }
+    }
+
+
+
+
+
 
 }
