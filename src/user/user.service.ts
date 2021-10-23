@@ -1,10 +1,11 @@
-import {LoginInput, LoginOutput} from './dtos/login.dto';
+import {LoginInput, LoginOutput, UpdateInput} from './dtos/login.dto';
 import {User} from './entities/user.entity';
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Repository} from 'typeorm';
 import {CreateAccountInput, CreateAccountOutput} from "./dtos/createAccount.dto";
 import {JwtService} from "../jwt/jwt.service";
+import {CoreOutput} from "../common/dtos/core.dto";
 
 
 
@@ -84,6 +85,22 @@ export class UserService {
     }
 
 
+    async editProfile(authUser : User,updateInput : UpdateInput) : Promise<CoreOutput> {
+        try{
+
+            await this.user.update(authUser.id , updateInput);
+
+            return {
+                ok : true
+            }
+
+        }catch (e) {
+            return {
+                ok : false,
+                error : "계정을 수정하지 못하였습니다"
+            }
+        }
+    }
 
 
 }

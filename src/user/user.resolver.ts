@@ -1,10 +1,11 @@
-import {LoginOutput, LoginInput} from './dtos/login.dto';
+import {LoginOutput, LoginInput, UpdateInput} from './dtos/login.dto';
 import {User} from './entities/user.entity';
 import {UserService} from './user.service';
 import {Args, Mutation, Query, Resolver} from '@nestjs/graphql';
 import {CreateAccountInput, CreateAccountOutput} from "./dtos/createAccount.dto";
 import {AuthUser} from "../auth/auth-user.decorator";
 import {Roles} from "../auth/role.decorator";
+import {CoreOutput} from "../common/dtos/core.dto";
 
 @Resolver()
 export class UserResolver {
@@ -31,6 +32,16 @@ export class UserResolver {
     @Roles(['Any'])
     me(@AuthUser() authUser: User) {
         return authUser;
+    }
+
+
+    @Mutation(() => CoreOutput)
+    @Roles(['Any'])
+    async editProfile(
+        @AuthUser() authUser : User,
+        @Args('input') updateInput : UpdateInput
+    ) : Promise<CoreOutput> {
+        return await this.userService.editProfile(authUser,updateInput);
     }
 
 
