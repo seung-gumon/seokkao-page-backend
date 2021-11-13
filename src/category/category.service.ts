@@ -10,24 +10,36 @@ import {CreateCategoryInput} from "./dtos/create-category.dto";
 export class CategoryService {
     constructor(
         @InjectRepository(Category)
-        private readonly category : Repository<Category>
+        private readonly category: Repository<Category>
     ) {
     }
 
 
-
-    async createCategory(input : CreateCategoryInput) : Promise<CoreOutput> {
-        try{
+    async createCategory(input: CreateCategoryInput): Promise<CoreOutput> {
+        try {
             await this.category.save(await this.category.create(input));
             return {
-                ok :true
+                ok: true
             }
-        }catch{
+        } catch {
             return {
-                ok :false
+                ok: false
             }
         }
+    }
 
+
+    async getCategoryByAdminRole(mainCategory: string): Promise<Category[]> {
+        try {
+            const whereMainCategory = mainCategory === 'Novelist' ? "Novel" : "Cartoon";
+            return await this.category.find({
+                where: {
+                    mainCategory: whereMainCategory
+                }
+            })
+        } catch (e) {
+            return []
+        }
     }
 
 
