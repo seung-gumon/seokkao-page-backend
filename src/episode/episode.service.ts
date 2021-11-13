@@ -307,7 +307,7 @@ export class EpisodeService {
                         series: ids.seriesId,
                         id: ids.episodeId,
                     },
-                    relations: ['series']
+                    relations: ['series','series.category']
                 });
             } else if (!purchaseHistory) {
                 return null
@@ -319,7 +319,7 @@ export class EpisodeService {
                     series: ids.seriesId,
                     id: ids.episodeId,
                 },
-                relations: ['series']
+                relations: ['series','series.category']
             });
 
         } catch (e) {
