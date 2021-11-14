@@ -44,7 +44,7 @@ import { EpisodeModule } from './episode/episode.module';
                     password: process.env.PASSWORD,
                     database: process.env.DB_NAME,
                 }),
-            synchronize:process.env.NODE_ENV !== 'prod',
+            synchronize:process.env.NODE_ENV !== 'production',
             logging: false,
             entities: [User, Category , Series , Part , Episode , PurChaseHistory],
         }),
