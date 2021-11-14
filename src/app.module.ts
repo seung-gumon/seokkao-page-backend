@@ -28,10 +28,10 @@ import { EpisodeModule } from './episode/episode.module';
         GraphQLModule.forRoot({
             playground : process.env.NODE_ENV !== 'production',
             autoSchemaFile: true,
-            cors: {
-                origin: ['http://localhost:3000'],
-                credentials: true,
-            },
+            // cors: {
+            //     origin: ['http://localhost:3000'],
+            //     credentials: true,
+            // },
             context: ({req}) => ({user: req['user']})
         }),
         TypeOrmModule.forRoot({
