@@ -23,7 +23,7 @@ import { EpisodeModule } from './episode/episode.module';
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
-            ignoreEnvFile: process.env.NODE_ENV === 'prod',
+            ignoreEnvFile: process.env.NODE_ENV === 'production',
         }),
         GraphQLModule.forRoot({
             autoSchemaFile: true,
