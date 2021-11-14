@@ -26,6 +26,7 @@ import { EpisodeModule } from './episode/episode.module';
             ignoreEnvFile: process.env.NODE_ENV === 'production',
         }),
         GraphQLModule.forRoot({
+            playground : process.env.NODE_ENV !== 'production',
             autoSchemaFile: true,
             cors: {
                 origin: ['http://localhost:3000'],
