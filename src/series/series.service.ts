@@ -60,7 +60,7 @@ export class SeriesService {
 
             return series;
         } catch (e) {
-            console.log(e)
+            return []
         }
     }
 
@@ -78,7 +78,7 @@ export class SeriesService {
 
             return series;
         } catch (e) {
-            console.log(e);
+            return []
         }
     }
 

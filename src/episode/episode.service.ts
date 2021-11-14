@@ -111,7 +111,6 @@ export class EpisodeService {
                 view : series.view ? series.view.length : 0
             }
         } catch (e) {
-            console.log(e);
             return null
         }
     }
@@ -176,7 +175,6 @@ export class EpisodeService {
                 ok: true
             }
         } catch (e) {
-            console.log(e);
             return {
                 ok: false,
                 error: "글을 생성 할 수 없습니다."
