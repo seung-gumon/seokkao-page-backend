@@ -50,7 +50,7 @@ export class SeriesService {
 
     async getMainPage(): Promise<Series[]> {
         try {
-            const minusSevenDaysFromToday = moment().add(-7, 'days').format('YYYY-MM-DD');
+            const minusSevenDaysFromToday = moment().add(-365, 'days').format('YYYY-MM-DD');
 
             const series = await this.series
                 .createQueryBuilder('series')
